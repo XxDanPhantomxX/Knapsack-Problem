@@ -49,7 +49,7 @@ def calcular():
 
     highlight = alt.selection_point(on='mouseover', fields=['Indice'], empty=True)
     chart = (
-        alt.Chart(df_plot, title='Visualización de Ítems (interactiva)')
+        alt.Chart(df_plot, title='Visualización de Ítems Seleccionados')
         .mark_bar()
         .encode(
             x=alt.X('Indice:O', title='Ítems'),
@@ -66,7 +66,7 @@ def calcular():
         .add_params(highlight)
         .interactive()
     )
-    st.subheader("Visualización Interactiva")
+    st.subheader("Visualización")
     st.altair_chart(chart, use_container_width=True)
     
 # Streamlit App

@@ -1,5 +1,6 @@
 # Knapsack-Problem
 A Python script to view the Knapsack Problem with Streamlit
+[Knapsack Problem APP with Streamlit](https://knapsack-problem.streamlit.app/)
 
 # Definition
 The Knapsack problem is a classic optimization problem where the goal is to maximize the total value of items placed in a knapsack without exceeding its weight capacity. Each item has a specific weight and value, and the challenge is to determine the optimal combination of items to include in the knapsack.
