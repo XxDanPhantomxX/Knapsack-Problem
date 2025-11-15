@@ -69,6 +69,8 @@ def calcular():
 # Streamlit App
 st.set_page_config(layout="wide")
 st.title("Optimizador de la Mochila (Knapsack Problem)")
+st.text("Este es un optimizador basado en un algoritmo codicioso para el problema de la mochila.")
+st.markdown("---")
 st.subheader("Datos de Entrada")
 with st.sidebar:
     st.header("1. Carga tus datos")
