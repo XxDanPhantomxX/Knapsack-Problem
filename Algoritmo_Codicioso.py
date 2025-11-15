@@ -23,15 +23,16 @@ def knapsack_greedy(weights, values, capacity):
             total_weight += weights[i]
             max_value += values[i]
 
-    return selected_items, max_value
+    return selected_items, max_value, total_weight
 
 def calcular():
     
     weights = data['Peso'].tolist()
     values = data['Valor'].tolist()
-    selected_items, max_value = knapsack_greedy(weights, values, capacidad_maxima)
+    selected_items, max_value, total_weight = knapsack_greedy(weights, values, capacidad_maxima)
     st.subheader("Resultados de la Optimización")
     st.write(f"Valor máximo obtenido: {max_value}")
+    st.write(f"Peso total utilizado: {total_weight}")
     st.write("Ítems seleccionados:")
     for i in selected_items:
         st.write(f"Ítem {i+1}: Peso = {weights[i]}, Valor = {values[i]}")
@@ -43,7 +44,10 @@ def calcular():
         "Valor": values,
         "Seleccionado": [i in selected_items for i in range(len(values))]
     })
+    # Devolver DataFrame para que la función visualice lo generado en otra función
+    return df_plot, max_value, total_weight
 
+def visualizar (df_plot, total_weight=None, capacidad_maxima_value=None):
     highlight = alt.selection_point(on='mouseover', fields=['Indice'], empty=True)
     chart = (
         alt.Chart(df_plot, title='Visualización de Ítems Seleccionados')
@@ -60,16 +64,23 @@ def calcular():
             ],
             opacity=alt.condition(highlight, alt.value(1), alt.value(0.9))
         )
-        .add_params(highlight)
+        .add_selection(highlight)
         .interactive()
     )
     st.subheader("Visualización")
     st.altair_chart(chart, use_container_width=True)
-    
+    # Barra de progreso que muestra espacio disponible (capacidad - peso utilizado)
+    if total_weight is not None and capacidad_maxima_value is not None and capacidad_maxima_value > 0:
+        espacio_disponible = max(capacidad_maxima_value - total_weight, 0)
+        pct_disponible = espacio_disponible / capacidad_maxima_value
+        # Mostrar barra de progreso (0..1) y texto con detalles
+        st.write(f"Espacio disponible: {espacio_disponible} / {capacidad_maxima_value} (kg)")
+        st.progress(pct_disponible)
+
 # Streamlit App
 st.set_page_config(layout="wide")
 st.title("Optimizador de la Mochila (Knapsack Problem)")
-st.text("Este es un optimizador basado en un algoritmo codicioso para el problema de la mochila.")
+st.text("Este es un optimizador basado en un algoritmo codicioso para el problema de la mochila. Los algoritmos codiciosos tratan de llegar a una solución optima dividiendo un problema completo en \"etapas\" (en iteraciones). En cada iteración buscan la solución optima para esa iteración. Aunque no garantizan una solución optima global, son eficientes y fáciles de implementar.")
 st.markdown("---")
 st.subheader("Datos de Entrada")
 with st.sidebar:
@@ -86,4 +97,5 @@ else:
     data = pd.DataFrame(default_csv_data)
 st.dataframe(data)
 if 'optimizacion' in locals() and optimizacion:
-    calcular()
+    df_plot, max_value, total_weight = calcular()
+    visualizar(df_plot, total_weight=total_weight, capacidad_maxima_value=capacidad_maxima)
