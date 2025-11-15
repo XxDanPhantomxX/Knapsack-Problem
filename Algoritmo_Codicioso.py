@@ -1,9 +1,6 @@
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 import altair as alt
 import streamlit as st
-import os
 
 default_csv_data = {
     'Indice': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
