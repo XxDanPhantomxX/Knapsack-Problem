@@ -25,8 +25,7 @@ def knapsack_greedy(weights, values, capacity):
 
     return selected_items, max_value, total_weight
 
-def calcular():
-    
+def calcular(data, capacidad_maxima):
     weights = data['Peso'].tolist()
     values = data['Valor'].tolist()
     selected_items, max_value, total_weight = knapsack_greedy(weights, values, capacidad_maxima)
@@ -44,7 +43,6 @@ def calcular():
         "Valor": values,
         "Seleccionado": [i in selected_items for i in range(len(values))]
     })
-    # Devolver DataFrame para que la función visualice lo generado en otra función
     return df_plot, max_value, total_weight
 
 def visualizar (df_plot, total_weight=None, capacidad_maxima_value=None):
@@ -77,25 +75,32 @@ def visualizar (df_plot, total_weight=None, capacidad_maxima_value=None):
         st.write(f"Espacio disponible: {espacio_disponible} / {capacidad_maxima_value} (kg)")
         st.progress(pct_disponible)
 
-# Streamlit App
-st.set_page_config(layout="wide")
-st.title("Optimizador de la Mochila (Knapsack Problem)")
-st.text("Este es un optimizador basado en un algoritmo codicioso para el problema de la mochila. Los algoritmos codiciosos tratan de llegar a una solución optima dividiendo un problema completo en \"etapas\" (en iteraciones). En cada iteración buscan la solución optima para esa iteración. Aunque no garantizan una solución optima global, son eficientes y fáciles de implementar.")
-st.markdown("---")
-st.subheader("Datos de Entrada")
-with st.sidebar:
-    st.header("1. Carga tus datos")
-    uploaded_file = st.file_uploader("Sube un .csv (Opcional)", type="csv")
-    st.header("2. Define la Capacidad")
-    capacidad_maxima = st.number_input("Capacidad máxima de peso:", min_value=1, value=150, step=10)
-    st.header("3. Ejecuta el Algoritmo")
-    optimizacion = st.button("Optimizar")
+def load_data(file):
+    if file is not None:
+        data = pd.read_csv(file)
+    else:
+        data = pd.DataFrame(default_csv_data)
+    return data
 
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
-else:
-    data = pd.DataFrame(default_csv_data)
-st.dataframe(data)
-if 'optimizacion' in locals() and optimizacion:
-    df_plot, max_value, total_weight = calcular()
-    visualizar(df_plot, total_weight=total_weight, capacidad_maxima_value=capacidad_maxima)
+def main():
+    """ Streamlit App """
+    st.set_page_config(layout="wide")
+    st.title("Optimizador de la Mochila (Knapsack Problem)")
+    st.text("Este es un optimizador basado en un algoritmo codicioso para el problema de la mochila. Los algoritmos codiciosos tratan de llegar a una solución optima dividiendo un problema completo en \"etapas\" (en iteraciones). En cada iteración buscan la solución optima para esa iteración. Aunque no garantizan una solución optima global, son eficientes y fáciles de implementar.")
+    st.markdown("---")
+    st.subheader("Datos de Entrada")
+    with st.sidebar:
+        st.header("1. Carga tus datos")
+        uploaded_file = st.file_uploader("Sube un .csv (Opcional)", type="csv")
+        st.header("2. Define la Capacidad")
+        capacidad_maxima = st.number_input("Capacidad máxima de peso:", min_value=1, value=150, step=10)
+        st.header("3. Ejecuta el Algoritmo")
+        optimizacion = st.button("Optimizar")
+    data = load_data(uploaded_file)
+    st.dataframe(data)
+    if 'optimizacion' in locals() and optimizacion:
+        df_plot, max_value, total_weight = calcular(data, capacidad_maxima)
+        visualizar(df_plot, total_weight=total_weight, capacidad_maxima_value=capacidad_maxima)
+
+if __name__ == "__main__":
+    main()
